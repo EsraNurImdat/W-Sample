@@ -11,6 +11,14 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
+import TextField from '@mui/material/TextField';
+
+
+
 
 const customTheme = createTheme({
   palette: {
@@ -41,6 +49,26 @@ export default function ProjectTable() {
     { id: 6, label: 'Project 6', value: "12.20.2023" },
   ];
   const [items, setItems] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
+  const [projectName, setProjectName] = useState('');
+  const [filteredProjects, setFilteredProjects] = useState(items);
+  const handleCloseDialog = () => {
+    setDialogOpen(false);
+  };
+
+  const handleSaveProjectName = () => {
+    const updatedProjects = items.map(project => {
+      if (project.pid === selectedProjectId) {
+        return { ...project, name: projectName };
+      }
+      return project;
+    });
+    setItems(updatedProjects);
+    setFilteredProjects(updatedProjects);
+    handleCloseDialog();
+  };
+
   const parseData = (data) => {
     return data.map(item => {
       const [id, url, date] = item.split(' '); // Splitting the string by space
@@ -63,13 +91,21 @@ export default function ProjectTable() {
             "Content-Type": "application/json",
           },
         });
-  
+    
         const data = await response.json();
         console.log(data, typeof data);
-  
+    
         if (data && typeof data === 'object') {
-          const itemList = Object.values(data);
-          setItems(itemList);
+          // Format the project_date to mm/dd/yyyy
+          const formattedData = Object.values(data).map(item => ({
+            ...item,
+            project_date: new Date(item.project_date).toLocaleDateString('en-US', {
+              month: '2-digit',
+              day: '2-digit',
+              year: 'numeric'
+            })
+          }));
+          setItems(formattedData);
           console.log("setitems", items);
           console.log("setitems", items,typeof items);
         } else {
@@ -79,8 +115,9 @@ export default function ProjectTable() {
         console.error("Error occurred:", error);
       }
     };
-  
-    fetchData(); 
+    
+    fetchData();
+    
   
     // add dependencies to control when this effect runs
   }, []); 
@@ -94,12 +131,8 @@ export default function ProjectTable() {
   };
 
   const handleEdit = (id) => {
- 
-    // yollanacak data direkt id
-   
-    console.log(`Edit clicked for project with id: ${id}`);
-   
-    
+    setSelectedProjectId(id);
+    setDialogOpen(true);
   };
 
   return (
@@ -120,18 +153,43 @@ export default function ProjectTable() {
               <TableRow>
                 <TableCell style={{ fontWeight: 'bold' }}>Project Name</TableCell>
                 <TableCell style={{ fontWeight: 'bold' }}>Project Date</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {items.map((info) => (
-                <TableRow key={info.id}>
-                  <TableCell>{info[1]}</TableCell>
-                  <TableCell>{info[2]}</TableCell>
+                <TableRow key={info.pid}>
+                  <TableCell>{info.project_name}</TableCell>
+                  <TableCell>{info.project_date}</TableCell>
+                  <TableCell>
+                    <Button size="small" variant="contained" color="error" onClick={() => handleDelete(info.pid)}>Delete</Button>{' '}
+                    <Button size="small" variant="contained" color="primary" onClick={() => handleEdit(info.pid)}>Edit</Button>
+                  </TableCell>
+
                 </TableRow>
               ))}
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>Edit Project</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="projectName"
+              label="Project Name"
+              type="text"
+              fullWidth
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleSaveProjectName}>Save</Button>
+          </DialogActions>
+        </Dialog>
       </div>
     </ThemeProvider>
 

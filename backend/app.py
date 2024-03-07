@@ -10,6 +10,8 @@ import re
 from crawl import crawl_and_save,ten_percent,cluster_websites,cluster_seperator,cluster_sampler
 
 
+from sqlalchemy import text
+from flask_sqlalchemy import SQLAlchemy
 
 
 #turning a password into ciphertext, to block  password breaches.
@@ -22,16 +24,9 @@ app.secret_key = "super secret key"
 #Cross Origin Resource Sharing (CORS) enables support on all routes, for all origins and methods
 CORS(app) 
 
-conn = psycopg2.connect(database="Wsample",  
-                        user="postgres", 
-                        password="nakrer",  
-                        host="localhost", port="5432") 
-cur = conn.cursor() 
 
-
-#@app.route('/')
-#def home():
-#   data = request.get_json()
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:W-Sample@wsample.crlioocavuh9.us-east-1.rds.amazonaws.com:5432/WSample'
+db = SQLAlchemy(app)
 
 results = []
 
@@ -89,36 +84,47 @@ def saveProject():
     print(items)
 
     pid = 0;
-
-    cur.execute("INSERT INTO projects (project_name, project_date) VALUES (%s,%s) RETURNING pid",
-                       (pName, date))
     
-    pid = cur.fetchone()[0]
-    conn.commit()
+    query = text("INSERT INTO projects (project_name, project_date) VALUES (:project_name, :project_date) RETURNING pid")
+    parameters = {"project_name": pName, "project_date": date}
+    result = db.session.execute(query, parameters)
+    pid = result.fetchone()[0] 
+    db.session.commit()
 
     #cur.execute('SELECT pid FROM projects WHERE project_name = %s', (pName,))
     #pid = cur.fetchone()
 
     for i in items:
-        cur.execute("INSERT INTO project_links (url, pid) VALUES (%s,%s)",
-                       (i, pid))
-    conn.commit(),
+        query = text("INSERT INTO project_links (url, pid) VALUES (:url, :pid)")
+        parameters = {"url": i, "pid": pid}
+        db.session.execute(query, parameters)
+
+    db.session.commit()
 
     return jsonify({'message': 'You have successfully saved!'}), 200
 
 
 @app.route('/getProject',methods=['GET'])
 def getProject():
-    projects = [] ;
-    cur.execute('SELECT * FROM projects')
-    projects = cur.fetchall()
+    query = text("SELECT * FROM projects")
+    result = db.session.execute(query)
 
-    #print(projects)
+    # Extract column names
+    columns = result.keys()
+
+    # Convert rows to list of dictionaries
+    projects = []
+    for row in result.fetchall():
+        project = {}
+        for idx, column in enumerate(columns):
+            project[column] = row[idx]
+        projects.append(project)
+
+    print(projects)
     return jsonify(projects)
     
 
 
- 
 @app.route('/register', methods=['POST'])
 def register():
 
@@ -132,8 +138,10 @@ def register():
     #hashed_password = generate_password_hash(password)
 
     # Check if account exists using your database
-    cur.execute('SELECT * FROM users WHERE user_name = %s', (username,))
-    account = cur.fetchone()
+
+    query = text("SELECT * FROM users WHERE user_name = :username")
+    result = db.session.execute(query, {"username": username})
+    account = result.fetchone()
 
     print(f"Data to be inserted: {firstname}, {lastname}, {password}, {username}")
 
@@ -146,9 +154,10 @@ def register():
     elif not re.match(r'[A-Za-z0-9]+', username):
         return jsonify({'message': 'Username must contain only characters and numbers!'}), 400
     else:
-        cur.execute("INSERT INTO users (user_name, name, surname, password) VALUES (%s,%s,%s,%s)",
-                       (username, firstname, lastname, password))
-        conn.commit()
+        query = text("INSERT INTO users (user_name, name, surname, password) VALUES (:user_name, :name, :surname, :password)")
+        parameters = {"user_name": username, "name": firstname, "surname": lastname, "password": password}
+        db.session.execute(query, parameters)
+        db.session.commit()
         return jsonify({'message': 'You have successfully registered!'}), 200
 
 
@@ -162,8 +171,9 @@ def login():
         password = data.get('password')
 
         # Check if account exists using your database
-        cur.execute('SELECT * FROM users WHERE user_name = %s', (username,))
-        account = cur.fetchone()
+        query = text("SELECT * FROM users WHERE user_name = :username")
+        result = db.session.execute(query, {"username": username})
+        account = result.fetchone()
 
         print(f"Data to be checked: {password}, {username}")
 
