@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -46,8 +45,8 @@ export default function ProjectTable() {
   const [searchDate, setSearchDate] = useState('');
   const [sortBy, setSortBy] = useState(null); 
   const [sortDirection, setSortDirection] = useState('asc'); 
-  const [page, setPage] = useState(0); // pagination için sayfa numarası
-  const [rowsPerPage, setRowsPerPage] = useState(5); // her sayfadaki öğe sayısı
+  const [page, setPage] = useState(0); 
+  const [rowsPerPage, setRowsPerPage] = useState(5); 
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
@@ -144,12 +143,12 @@ export default function ProjectTable() {
   };
 
   const handleSort = (sortByValue) => {
-    // Eğer sortBy zaten belirlenmiş ise ve aynı değeri tıklarsak, sıralama yönünü değiştirelim
+    
     if (sortBy === sortByValue) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
     } else {
       setSortBy(sortByValue);
-      setSortDirection('asc'); // Yeni bir sıralama kriteri seçtiğimizde, varsayılan olarak 'asc' yönünde sıralamak istiyoruz
+      setSortDirection('asc'); 
     }
   };
   
@@ -199,6 +198,7 @@ export default function ProjectTable() {
   };
 
   const buttonText = sortBy ? `Sort by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} (${sortDirection === 'asc' ? 'Asc' : 'Desc'})` : 'Sort';
+
 
 
   return (
