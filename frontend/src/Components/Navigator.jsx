@@ -60,7 +60,7 @@ function Navigator() {
     <AppBar position="absolute" open={isSidebarOpen}>
       <Toolbar
         sx={{
-          pr: "24px", // keep right padding when drawer closed
+          pr: "24px", 
         }}
       >
         <IconButton
