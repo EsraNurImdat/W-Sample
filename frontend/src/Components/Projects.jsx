@@ -12,6 +12,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TablePagination } from '@mui/material';
+import Grid from '@mui/material/Grid';
 
 const customTheme = createTheme({
   palette: {
@@ -204,10 +205,18 @@ export default function ProjectTable() {
   return (
     <ThemeProvider theme={customTheme}>
       <div style={{ textAlign: 'center' }}>
-        <Box sx={{ pt: 4, pb: 2 , pr: 38}} >
-          <Button variant="outlined" color="primary" onClick={handleSearchByName}>Search by Name</Button>{' '}
-          <Button variant="outlined" color="primary" onClick={handleSearchByDate}>Search by Date</Button>{' '}
-          <Button variant="outlined" color="primary" onClick={() => handleSort(sortBy === 'name' ? 'date' : 'name')}>{buttonText}</Button>
+        <Box mt={2} mb={2}>
+          <Grid container spacing={2} justifyContent="center">
+            <Grid item>
+              <Button variant="outlined" color="primary" onClick={handleSearchByName}>Search by Name</Button>
+            </Grid>
+            <Grid item>
+              <Button variant="outlined" color="primary" onClick={handleSearchByDate}>Search by Date</Button>
+            </Grid>
+            <Grid item>
+              <Button variant="outlined" color="primary" onClick={() => handleSort(sortBy === 'name' ? 'date' : 'name')}>{buttonText}</Button>
+            </Grid>
+          </Grid>
         </Box>
 
         {showNameSearch && (
@@ -236,47 +245,46 @@ export default function ProjectTable() {
           />
         )}
 
-<TableContainer component={Paper} style={{ width: '50%', margin: 'auto', marginTop: '20px' }}>
-  <Table>
-    <TableHead>
-      <TableRow>
-        <TableCell style={{ fontWeight: 'bold' }}>Project Name</TableCell>
-        <TableCell style={{ fontWeight: 'bold' }}>Project Date</TableCell>
-        <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
-      </TableRow>
-    </TableHead>
-    <TableBody>
-      {(rowsPerPage > 0
-        ? filteredProjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-        : filteredProjects
-      ).map((info) => (
-        <TableRow key={info.pid}>
-          <TableCell>{info.project_name}</TableCell>
-          <TableCell>{info.project_date}</TableCell>
-          <TableCell>
-            <Button size="small" variant="contained" color="error" onClick={() => handleDelete(info.pid)}>Delete</Button>{' '}
-            <Button size="small" variant="contained" color="primary" onClick={() => handleEdit(info.pid)}>Edit</Button>
-          </TableCell>
-        </TableRow>
-      ))}
-    </TableBody>
-  </Table>
-</TableContainer>
-<Box sx={{ width: '50%', margin: 'auto', marginTop: '20px' }}>
-  <TablePagination
-    rowsPerPageOptions={[5, 10, 25]}
-    component="div"
-    count={filteredProjects.length}
-    rowsPerPage={rowsPerPage}
-    page={page}
-    onPageChange={(event, newPage) => setPage(newPage)}
-    onRowsPerPageChange={(event) => {
-      setRowsPerPage(parseInt(event.target.value, 10));
-      setPage(0);
-    }}
-  />
-</Box>
-
+        <TableContainer component={Paper} style={{ width: '50%', margin: 'auto', marginTop: '20px' }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell style={{ fontWeight: 'bold' }}>Project Name</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Project Date</TableCell>
+                <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {(rowsPerPage > 0
+                ? filteredProjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                : filteredProjects
+              ).map((info) => (
+                <TableRow key={info.pid}>
+                  <TableCell>{info.project_name}</TableCell>
+                  <TableCell>{info.project_date}</TableCell>
+                  <TableCell>
+                    <Button size="small" variant="contained" color="error" onClick={() => handleDelete(info.pid)}>Delete</Button>{' '}
+                    <Button size="small" variant="contained" color="primary" onClick={() => handleEdit(info.pid)}>Edit</Button>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <Box style={{ width: '50%', margin: 'auto', marginTop: '20px' }}>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={filteredProjects.length}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={(event, newPage) => setPage(newPage)}
+            onRowsPerPageChange={(event) => {
+              setRowsPerPage(parseInt(event.target.value, 10));
+              setPage(0);
+            }}
+          />
+        </Box>
       </div>
     </ThemeProvider>
   );
