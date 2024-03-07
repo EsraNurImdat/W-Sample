@@ -65,7 +65,52 @@ def search():
         random = ten_percent(urls)
         results.extend(random)
         return jsonify(random)
+    
+@app.route('/deleteProject', methods=['POST'])
+def deleteForm():
+    data = request.get_json()
 
+    pId = data.get('delId')
+    print("delete pid",pId)
+    try:
+        
+        user_p_delete_query = text("DELETE FROM user_projects WHERE project_id= :pId")
+        db.session.execute(user_p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        links_p_delete_query = text("DELETE FROM project_links WHERE pid= :pId")
+        db.session.execute(links_p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        
+        p_delete_query = text("DELETE FROM projects WHERE pid = :pId")
+        db.session.execute(p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        return jsonify({'message': 'Project successfully deleted!'}), 200
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': 'Error for deleting project!'}), 500
+@app.route('/editProject', methods=['POST'])
+def updateName():
+    data = request.get_json()
+
+    pName = data.get('pName')
+    pId = data.get('pId')
+    print("project name", pId)
+    try:
+        user_p_update_query = text("UPDATE projects SET project_name = :pName WHERE pid = :pId")
+        db.session.execute(user_p_update_query, {"pName": pName, "pId": pId})
+        db.session.commit()
+
+
+        return jsonify({'message': 'Project successfully updated!'}), 200
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': 'Error for updating project!'}), 500
+    
 
 @app.route('/getresults',methods=['GET'])
 def getresults():

@@ -18,7 +18,7 @@ import DialogActions from '@mui/material/DialogActions';
 import TextField from '@mui/material/TextField';
 
 
-
+import axios  from 'axios';
 
 const customTheme = createTheme({
   palette: {
@@ -53,11 +53,28 @@ export default function ProjectTable() {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [projectName, setProjectName] = useState('');
   const [filteredProjects, setFilteredProjects] = useState(items);
+  const [responseM, setRm] = useState([]);
   const handleCloseDialog = () => {
     setDialogOpen(false);
   };
 
   const handleSaveProjectName = () => {
+    const data = {
+      pId: selectedProjectId,
+      pName: projectName,
+    };
+    console.log("pname ",selectedProjectId,projectName)
+    axios.post('http://127.0.0.1:5000/editProject',data)
+    .then(function (response) {
+      console.log(response);
+      setRm(response.data.message)
+      alert(response.data.message)
+    })
+    .catch(function (error) {
+      console.log(error.response.data);
+      alert(error.response.data.message)
+    });
+
     const updatedProjects = items.map(project => {
       if (project.pid === selectedProjectId) {
         return { ...project, name: projectName };
@@ -79,11 +96,7 @@ export default function ProjectTable() {
       };
     });
   };
-  
-  React.useEffect(() => {
-    
-
-    const fetchData = async () => {
+   const fetchData = async () => {
       try {
         const response = await fetch("http://127.0.0.1:5000/getProject", {
           method: "GET",
@@ -115,6 +128,10 @@ export default function ProjectTable() {
         console.error("Error occurred:", error);
       }
     };
+  React.useEffect(() => {
+    
+
+   
     
     fetchData();
     
@@ -122,13 +139,33 @@ export default function ProjectTable() {
     // add dependencies to control when this effect runs
   }, []); 
 
-  
- 
-  const handleDelete = (id) => {
-     // yollanacak data direkt id
+   const handleDelete = (id) => {
+    const data = {
+      delId: id,
+    };
+    console.log("delete id",id)
+    axios.post('http://127.0.0.1:5000/deleteProject',data)
+    .then(function (response) {
+      console.log(response);
+      setRm(response.data.message)
+      alert(response.data.message)
+    })
+    .catch(function (error) {
+      console.log(error.response.data);
+      alert(error.response.data.message)
+    });
+
     console.log(`Delete clicked for project with id: ${id}`);
     
   };
+  React.useEffect(() => {
+    fetchData();
+  }, [responseM]);
+ 
+
+  
+ 
+ 
 
   const handleEdit = (id) => {
     setSelectedProjectId(id);
@@ -195,4 +232,6 @@ export default function ProjectTable() {
 
   );
 }
+
+
 
