@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
@@ -13,6 +14,10 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { TablePagination } from '@mui/material';
 import Grid from '@mui/material/Grid';
+import Dialog from '@mui/material/Dialog';
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogContent from '@mui/material/DialogContent';
+import DialogActions from '@mui/material/DialogActions';
 
 const customTheme = createTheme({
   palette: {
@@ -24,7 +29,7 @@ const customTheme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundImage: 'url("https://i.pinimg.com/564x/4f/d4/97/4fd4972cb3cf77fda159e722cf1fc6ac.jpg")', 
+          backgroundImage: 'url("https://i.pinimg.com/564x/4f/d4/97/4fd4972cb3cf77fda159e722cf1fc6ac.jpg")',
           backgroundSize: 'cover',
           minHeight: '1000px',
         },
@@ -44,41 +49,13 @@ export default function ProjectTable() {
   const [showDateSearch, setShowDateSearch] = useState(false);
   const [searchName, setSearchName] = useState('');
   const [searchDate, setSearchDate] = useState('');
-  const [sortBy, setSortBy] = useState(null); 
-  const [sortDirection, setSortDirection] = useState('asc'); 
-  const [page, setPage] = useState(0); 
-  const [rowsPerPage, setRowsPerPage] = useState(5); 
+  const [sortBy, setSortBy] = useState(null);
+  const [sortDirection, setSortDirection] = useState('asc');
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const handleCloseDialog = () => {
     setDialogOpen(false);
-  };
-  
-  const handleSaveProjectName = () => {
-    const data = {
-      pId: selectedProjectId,
-      pName: projectName,
-    };
-
-    axios
-      .post('http://127.0.0.1:5000/editProject', data)
-      .then(function (response) {
-        setRm(response.data.message);
-        alert(response.data.message);
-      })
-      .catch(function (error) {
-        console.log(error.response.data);
-        alert(error.response.data.message);
-      });
-
-    const updatedProjects = items.map((project) => {
-      if (project.id === selectedProjectId) {
-        return { ...project, project_name: projectName };
-      }
-      return project;
-    });
-    setItems(updatedProjects);
-    setFilteredProjects(updatedProjects);
-    handleCloseDialog();
   };
 
   const fetchData = async () => {
@@ -94,7 +71,6 @@ export default function ProjectTable() {
       console.log(data, typeof data);
 
       if (data && typeof data === 'object') {
-       
         const formattedData = Object.values(data).map((item, index) => ({
           id: index + 1,
           ...item,
@@ -105,8 +81,7 @@ export default function ProjectTable() {
           }),
         }));
         setItems(formattedData);
-        console.log('setitems', items);
-        console.log('setitems', items, typeof items);
+        setFilteredProjects(formattedData); 
       } else {
         console.error('Error: Invalid data structure');
       }
@@ -117,42 +92,16 @@ export default function ProjectTable() {
 
   useEffect(() => {
     fetchData();
-  }, []);
-
-  useEffect(() => {
-    handleSearch();
-  }, [searchName,searchDate]);
-
+  }, []); 
 
   useEffect(() => {
     fetchData();
-  }, [responseM]);
+  }, [items]); 
 
-  const handleSearch = () => {
-    let filteredProjects = [...items];
-    console.log("search",searchName)
-    if (showNameSearch) {
-      filteredProjects = filteredProjects.filter(project =>
-        project.project_name.toLowerCase().includes(searchName.toLowerCase())
-      );
-    } else if (showDateSearch) {
-      filteredProjects = filteredProjects.filter(project =>
-        project.project_date.toLowerCase().includes(searchDate.toLowerCase())
-      );
-    }
-    setFilteredProjects(filteredProjects);
-  };
+  useEffect(() => {
+    handleSearch();
+  }, [searchName, searchDate]);
 
-  const handleSort = (sortByValue) => {
-    
-    if (sortBy === sortByValue) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
-    } else {
-      setSortBy(sortByValue);
-      setSortDirection('asc'); 
-    }
-  };
-  
   useEffect(() => {
     if (sortBy) {
       const sortedProjects = [...filteredProjects].sort((a, b) => {
@@ -165,17 +114,70 @@ export default function ProjectTable() {
       setFilteredProjects(sortedProjects);
     }
   }, [sortBy, sortDirection, filteredProjects]);
+
+  const handleSearch = () => {
+    let filteredProjects = [...items];
+
+    filteredProjects = filteredProjects.filter(project => {
+      if (showNameSearch) {
+        return project.project_name.toLowerCase().includes(searchName.toLowerCase());
+      } else if (showDateSearch) {
+        return project.project_date.toLowerCase().includes(searchDate.toLowerCase());
+      }
+      return true;
+    });
+
+    setFilteredProjects(filteredProjects);
+  };
+
+  const handleSort = (sortByValue) => {
+    if (sortBy === sortByValue) {
+      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortBy(sortByValue);
+      setSortDirection('asc');
+    }
+  };
+
+  const handleSaveProjectName = () => {
+    const data = {
+      pId: selectedProjectId,
+      pName: projectName,
+    };
+  
+    axios
+      .post('http://127.0.0.1:5000/editProject', data)
+      .then(function (response) {
+        setRm(response.data.message);
+        alert(response.data.message);
+        const updatedItems = items.map(item => {
+          if (item.id === selectedProjectId) {
+            return { ...item, project_name: projectName };
+          }
+          return item;
+        });
+        setItems(updatedItems);
+      })
+      .catch(function (error) {
+        console.log(error.response.data);
+        alert(error.response.data.message);
+      });
+  
+    handleCloseDialog();
+  };
   
   const handleDelete = (id) => {
     const data = {
       delId: id,
     };
-
+  
     axios
       .post('http://127.0.0.1:5000/deleteProject', data)
       .then(function (response) {
         setRm(response.data.message);
         alert(response.data.message);
+        const updatedItems = items.filter(item => item.id !== id);
+        setItems(updatedItems);
       })
       .catch(function (error) {
         console.log(error.response.data);
@@ -199,8 +201,6 @@ export default function ProjectTable() {
   };
 
   const buttonText = sortBy ? `Sort by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} (${sortDirection === 'asc' ? 'Asc' : 'Desc'})` : 'Sort';
-
-
 
   return (
     <ThemeProvider theme={customTheme}>
@@ -271,6 +271,25 @@ export default function ProjectTable() {
             </TableBody>
           </Table>
         </TableContainer>
+        <Dialog open={dialogOpen} onClose={handleCloseDialog}>
+          <DialogTitle>Edit Project Name</DialogTitle>
+          <DialogContent>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="editProjectName"
+              label="Project Name"
+              type="text"
+              fullWidth
+              value={projectName}
+              onChange={(e) => setProjectName(e.target.value)}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseDialog}>Cancel</Button>
+            <Button onClick={handleSaveProjectName} color="primary">Save</Button>
+          </DialogActions>
+        </Dialog>
         <Box style={{ width: '50%', margin: 'auto', marginTop: '20px' }}>
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
