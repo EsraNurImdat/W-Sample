@@ -136,6 +136,7 @@ def register():
     password = data.get('password')
 
     #hashed_password = generate_password_hash(password)
+    #Kullanıcı şifresini hashlayarak koruyamk için bu kodu kullan
 
     # Check if account exists using your database
 
