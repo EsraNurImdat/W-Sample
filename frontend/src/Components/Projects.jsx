@@ -18,12 +18,12 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
-
+import { blue } from '@mui/material/colors';
 const customTheme = createTheme({
   palette: {
-    primary: { //#01579b
-      main: '#01579b',
-    },
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {
@@ -263,7 +263,7 @@ export default function ProjectTable() {
                   <TableCell>{info.project_name}</TableCell>
                   <TableCell>{info.project_date}</TableCell>
                   <TableCell>
-                    <Button size="small" variant="contained" color="error" onClick={() => handleDelete(info.pid)}>Delete</Button>{' '}
+                    <Button size="small" variant="contained" color="primary" onClick={() => handleDelete(info.pid)} style={{ backgroundColor: '#000080' }} >Delete</Button>{' '}
                     <Button size="small" variant="contained" color="primary" onClick={() => handleEdit(info.pid)}>Edit</Button>
                   </TableCell>
                 </TableRow>

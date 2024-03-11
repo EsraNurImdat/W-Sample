@@ -11,13 +11,13 @@ import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-
+import { blue } from '@mui/material/colors';
 //unreg user'ın işlem bittikten sonra karşılaşacağı screen. save project buttonu yok sadece download var.
 const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#01579b',
-    },
+ palette: {
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {

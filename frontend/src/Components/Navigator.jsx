@@ -10,13 +10,14 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleSidebar } from "../store/dashboardSlice";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { blue } from '@mui/material/colors';
 //import { toggleSidebar } from "../../store/dashboardSlice";
 //dashboard u acar
 const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#01579b',
-    },
+ palette: {
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {

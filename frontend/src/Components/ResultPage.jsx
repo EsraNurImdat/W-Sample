@@ -13,11 +13,12 @@ import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import { CSVLink } from 'react-csv';
+import { blue } from '@mui/material/colors';
 const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#01579b',
-    },
+ palette: {
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {
@@ -148,7 +149,7 @@ export default function ResultTable(props) {
         <br></br>  
         <Button variant="contained"  size="small" onClick={handleSave} >
                         Save Project
-        </Button> 
+        </Button> {''}
         <CSVLink data={csvData} filename={'urls.csv'}>
         <Button variant="contained" size="small">
           Download CSV

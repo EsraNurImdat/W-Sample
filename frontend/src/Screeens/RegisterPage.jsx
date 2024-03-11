@@ -11,12 +11,12 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { Link } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import {useNavigate} from "react-router-dom";
-
+import { blue } from '@mui/material/colors';
 const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#01579b',
-    },
+ palette: {
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {

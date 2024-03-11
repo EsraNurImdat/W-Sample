@@ -9,17 +9,17 @@ import Button from '@mui/material/Button';
 import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import LinearProgress from '@mui/material/LinearProgress';
-
+import { blue } from '@mui/material/colors';
 
 
 import {useNavigate} from "react-router-dom";
 //searchbar ve selection UI'nı oluşturur.
 //bu sayfa component olarak kullanıldı. Home ve SearchScreen in içine importlandı. Home direk unreg user'ın interface'i. SearchScreen reg user 'ın interface'i.
 const customTheme = createTheme({
-  palette: {
-    primary: {
-      main: '#01579b',
-    },
+ palette: {
+    contrastThreshold: 4.5,
+    darker: blue[900],
+ 
   },
   components: {
     MuiCssBaseline: {
