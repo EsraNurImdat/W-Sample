@@ -54,8 +54,9 @@ export default function ResultTable(props) {
     console.log(pName);
   }, [pName]);
 
+  const axios = require('axios');
   const handleSave= () =>{
-    const axios = require('axios');
+    //const axios = require('axios');
 
     const data = {
       pName: pName,
