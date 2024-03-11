@@ -11,7 +11,7 @@ import ProjectTable from "../Components/Projects";
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: '#00897b',
+      main: '#01579b',
     },
   
   },

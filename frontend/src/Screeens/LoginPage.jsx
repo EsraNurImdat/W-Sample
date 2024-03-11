@@ -20,7 +20,7 @@ import {useNavigate} from "react-router-dom";
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: '#00897b',
+      main: '#01579b',
     },
   
   },
@@ -106,7 +106,7 @@ export default function Login() {
             alignItems: 'center',
           }}
         >
-          <Avatar sx={{ m: 1, bgcolor: '#00897b'}}>
+          <Avatar sx={{ m: 1, bgcolor: '#01579b'}}>
             <PersonIcon />
           </Avatar>
           <Typography component="h1" variant="h5">

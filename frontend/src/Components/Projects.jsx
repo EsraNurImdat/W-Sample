@@ -21,8 +21,8 @@ import DialogActions from '@mui/material/DialogActions';
 
 const customTheme = createTheme({
   palette: {
-    primary: {
-      main: '#00897b',
+    primary: { //#01579b
+      main: '#01579b',
     },
   },
   components: {

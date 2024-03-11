@@ -51,7 +51,7 @@ const Navbar = () => {
       href={navLinks.destination}
       key={navLinks.id}
       underline="hover" 
-      color="#00897b"
+      color="#01579b"
       sx={{
         fontWeight: "300",
         fontSize: "28px",

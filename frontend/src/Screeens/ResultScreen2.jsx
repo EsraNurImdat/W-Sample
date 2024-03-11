@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: '#00897b',
+      main: '#01579b',
     },
   },
   components: {
@@ -50,7 +50,7 @@ export default function ResultTable2() {
           
           <Box sx={{ pt: 4, pb: 6 }}>
             <Container maxWidth="md">
-              <Typography style={{ marginBottom: '-8rem' }} component="h2" variant="h3" align="center" color="#00897b" gutterBottom>
+              <Typography style={{ marginBottom: '-8rem' }} component="h2" variant="h3" align="center" color="#01579b" gutterBottom>
                 Result
               </Typography>
             </Container>

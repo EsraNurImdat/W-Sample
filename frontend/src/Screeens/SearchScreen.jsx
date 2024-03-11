@@ -12,7 +12,7 @@ const customTheme = createTheme({
     palette: {
     },
       primary: {
-        main: '#00897b',
+        main: '#01579b',
     },
     components: {
       MuiCssBaseline: {
@@ -48,7 +48,7 @@ function SearchScreen ()  {
           <Box sx={{ flex:1}}>
           <Typography
           sx={{
-            color: "#00897b",
+            color: "#01579b",
             marginTop: "196.5px",
             textAlign: "center",
             fontWeight: "600",

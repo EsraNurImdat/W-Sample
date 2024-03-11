@@ -8,7 +8,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 const customTheme = createTheme({
   palette: {
     primary: {
-      main: '#00897b',
+      main: '#01579b',
     },
   
   },
@@ -69,7 +69,7 @@ const Home = () => {
         }} />
         <Typography
           sx={{
-            color: "#00897b",
+            color: "#01579b",
             marginTop: "196.5px",
             textAlign: "center",
             fontWeight: "600",
