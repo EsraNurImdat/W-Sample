@@ -5,7 +5,8 @@ from flask import *
 import psycopg2 #pip install psycopg2 
 from flask_cors import CORS
 import re 
-
+import jwt
+import datetime
 
 from crawl import crawl_and_save,ten_percent,cluster_websites,cluster_seperator,cluster_sampler
 
@@ -30,6 +31,8 @@ db = SQLAlchemy(app)
 
 results = []
 
+
+JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
     
@@ -167,6 +170,42 @@ def getProject():
 
     print(projects)
     return jsonify(projects)
+
+
+"""
+@app.route('/getProjects', methods=['GET'])
+def get_projects():
+    user_name = request.args.get('user_name')  # Kullanıcı adını isteğe bağlı olarak al
+    if not user_name:
+        return jsonify({"error": "Missing user_name parameter"}), 400  # Eğer kullanıcı adı belirtilmemişse hata döndür
+
+    # Kullanıcının projelerini almak için bir sorgu oluştur
+    """
+      # query = text("""
+         #SELECT projects.project_id, projects.project_name, projects.project_date
+         # FROM user_project
+         # JOIN projects ON user_project.project_id = projects.project_id
+    # WHERE user_project.user_name = :user_name
+   # """)
+    
+    
+    # Sorguyu çalıştır
+"""
+    result = db.session.execute(query, {"user_name": user_name})
+
+    # Satırları sözlük listesine dönüştür
+    projects = []
+    for row in result.fetchall():
+        project = {
+            "project_id": row["project_id"],
+            "project_name": row["project_name"],
+            "project_date": row["project_date"]
+        }
+        projects.append(project)
+
+    return jsonify(projects)"""
+
+
     
 
 
@@ -228,8 +267,8 @@ def login():
             if password.__eq__(password_rs):
                 # check_password_hash(password_rs, password):
                 # Create session data, we can access this data in other routes
-                session['username'] = username
-                return jsonify({'message': 'Login successful'}), 200
+                token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, JWT_SECRET_KEY)
+                return jsonify({'message': 'Login successful','token': token}), 200
             else:
                 return jsonify({'message': 'Incorrect password'}), 400
         else:
@@ -237,9 +276,6 @@ def login():
 
 
     
-#@app.route("/logout")
-#def logout():
-    session.pop("username", None)
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -76,7 +76,7 @@ export default function Register() {
       firstName: formData.firstName
     };
 
-    axios.post('http://localhost:5000/register', data)
+    const response_axios = axios.post('http://localhost:5000/register', data)
       .then(function (response) {
         console.log(response);
         navigate("/");
@@ -85,7 +85,7 @@ export default function Register() {
         console.log(error.response.data);
         alert(error.response.data.message)
       });
-
+     console.log("response_axios",response_axios)
     
   };
 
