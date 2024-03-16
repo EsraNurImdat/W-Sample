@@ -365,6 +365,11 @@ export default function ProjectTable() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+
+  const username = localStorage.getItem('username')
+  const userdata = {
+    username: username
+  };
   
 
   const handleCloseDialog = () => {
@@ -373,12 +378,16 @@ export default function ProjectTable() {
 
   const fetchData = async () => {
     try {
+      //const response = await axios.post('http://127.0.0.1:5000/getProject', userdata)
+      
       const response = await fetch('http://127.0.0.1:5000/getProject', {
-        method: 'GET',
+        method: 'POST', // Veri gönderdiğimiz için POST metodunu kullanıyoruz
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify(userdata), // Veriyi JSON formatına çevirerek gönderiyoruz
       });
+      
 
       const data = await response.json();
       console.log(data, typeof data);

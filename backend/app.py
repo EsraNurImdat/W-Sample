@@ -30,12 +30,12 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:W-Sample@wsample.
 db = SQLAlchemy(app)
 
 results = []
-
+user_check = []
 
 JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
-    
+
     data = request.get_json()
     technique = data.get('technique')
     searchQuery = data.get('searchQuery')
@@ -125,6 +125,9 @@ def saveProject():
     data = request.get_json()
     pName = data.get('pName')
     date = data.get('date')
+    username = data.get('username')
+
+    print(username)
     
     items = data.get('items')
     print(pName)
@@ -137,6 +140,11 @@ def saveProject():
     parameters = {"project_name": pName, "project_date": date}
     result = db.session.execute(query, parameters)
     pid = result.fetchone()[0] 
+    db.session.commit()
+
+    query = text("INSERT INTO user_projects (user_name, project_id) VALUES (:username, :pid)")
+    parameters = {"username": username, "pid": pid}
+    result = db.session.execute(query, parameters)
     db.session.commit()
 
     #cur.execute('SELECT pid FROM projects WHERE project_name = %s', (pName,))
@@ -152,10 +160,20 @@ def saveProject():
     return jsonify({'message': 'You have successfully saved!'}), 200
 
 
-@app.route('/getProject',methods=['GET'])
+@app.route('/getProject',methods=['POST'])
 def getProject():
-    query = text("SELECT * FROM projects")
-    result = db.session.execute(query)
+   
+    data = request.json
+    username = data['username']
+
+    query = text("""
+         SELECT projects.pid, projects.project_name, projects.project_date
+         FROM user_projects
+         JOIN projects ON user_projects.project_id = projects.pid
+         WHERE user_projects.user_name = :username
+    """)
+    result = db.session.execute(query, {"username": username})
+    #projects = result.fetchall()
 
     # Extract column names
     columns = result.keys()
@@ -268,7 +286,8 @@ def login():
                 # check_password_hash(password_rs, password):
                 # Create session data, we can access this data in other routes
                 token = jwt.encode({'username': username, 'exp': datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, JWT_SECRET_KEY)
-                return jsonify({'message': 'Login successful','token': token}), 200
+                user_check.append(username)
+                return jsonify({'message': 'Login successful','token': token , 'username':username}), 200
             else:
                 return jsonify({'message': 'Incorrect password'}), 400
         else:

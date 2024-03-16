@@ -218,6 +218,7 @@ export default function Login() {
       .then(function (response) {
         console.log(response);
         localStorage.setItem("token",response.data.token)
+        localStorage.setItem("username",response.data.username)
         console.log("token",response.data.token)
         navigate("/searchscreen");
       })

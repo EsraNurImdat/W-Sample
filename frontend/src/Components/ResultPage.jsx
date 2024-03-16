@@ -65,12 +65,14 @@ export default function ResultTable(props) {
   const handleSave= () =>{
     //const axios = require('axios');
 
+    const username = localStorage.getItem('username')
     const data = {
       pName: pName,
       date: date,
-      items: items
+      items: items,
+      username: username
     };
-
+    
     axios.post('http://localhost:5000/saveProject', data)
       .then(function (response) {
         console.log(response);
