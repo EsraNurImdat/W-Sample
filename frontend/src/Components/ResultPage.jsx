@@ -14,6 +14,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import { CSVLink } from 'react-csv';
 import { blue } from '@mui/material/colors';
+import axios from 'axios';
+
+
+
 const customTheme = createTheme({
  palette: {
     contrastThreshold: 4.5,
@@ -40,7 +44,7 @@ export default function ResultTable(props) {
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
 
-  const date = `${day}-${month}-${year}`;
+  const date = `${month}-${day}-${year}`;
   console.log(date) // 4-1-2024 yazar
   const [pName, setPname] = useState("");
 
@@ -54,7 +58,7 @@ export default function ResultTable(props) {
     console.log(pName);
   }, [pName]);
 
-  const axios = require('axios');
+  //const axios = require('axios');
   const handleSave= () =>{
     //const axios = require('axios');
 

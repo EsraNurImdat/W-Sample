@@ -1,5 +1,5 @@
 import React from "react";
-import SearchBA from "../Components/Search";
+import SearchBA from "../Components/Search2";
 import { Box, Container, Typography } from "@mui/material";
 import Navbar from "../Components/NavBar";
 import { createTheme, ThemeProvider } from '@mui/material/styles';

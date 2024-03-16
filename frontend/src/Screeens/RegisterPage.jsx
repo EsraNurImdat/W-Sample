@@ -12,6 +12,8 @@ import { Link } from "react-router-dom";
 import PersonIcon from '@mui/icons-material/Person';
 import {useNavigate} from "react-router-dom";
 import { blue } from '@mui/material/colors';
+import axios from 'axios';
+
 const customTheme = createTheme({
  palette: {
     contrastThreshold: 4.5,
@@ -67,7 +69,7 @@ export default function Register() {
     setPasswordError('');*/
 
     //For register backend - Serra
-    const axios = require('axios');
+    //const axios = require('axios');
 
     const data = {
       password: formData.password,

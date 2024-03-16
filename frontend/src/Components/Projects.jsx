@@ -415,7 +415,7 @@ export default function ProjectTable() {
         if (sortBy === 'name') {
           return sortDirection === 'asc' ? a.project_name.localeCompare(b.project_name) : b.project_name.localeCompare(a.project_name);
         } else if (sortBy === 'date') {
-          return sortDirection === 'asc' ? new Date(a.project_date) - new Date(b.project_date) : new Date(b.project_date) - new Date(a.project_date);
+          return sortDirection === 'dsc' ? new Date(a.project_date) - new Date(b.project_date) : new Date(b.project_date) - new Date(a.project_date);
         }
       });
       setFilteredProjects(sortedProjects);
@@ -435,6 +435,8 @@ export default function ProjectTable() {
     });
 
     setFilteredProjects(filteredProjects);
+    setPage(0); // Tablo sayfalama değişkenlerini sıfırla
+    setRowsPerPage(5); // Tablo sayfalama değişkenlerini sıfırla
   };
 
   const handleSort = (sortByValue) => {
@@ -509,7 +511,7 @@ export default function ProjectTable() {
     if (showNameSearch) setShowNameSearch(false);
   };
 
-  const buttonText = sortBy ? `Sort by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)} (${sortDirection === 'asc' ? 'Asc' : 'Desc'})` : 'Sort';
+  const buttonText = sortBy ? `Sorted by ${sortBy.charAt(0).toUpperCase() + sortBy.slice(1)}` : 'Sort';
 
   return (
     <ThemeProvider theme={customTheme}>

@@ -1,4 +1,3 @@
-import React from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -12,6 +11,8 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
+import React, { useState } from 'react';
+import { CSVLink } from 'react-csv';
 //unreg user'ın işlem bittikten sonra karşılaşacağı screen. save project buttonu yok sadece download var.
 const customTheme = createTheme({
  palette: {
@@ -33,6 +34,7 @@ const customTheme = createTheme({
 });
 
 export default function ResultTable2() {
+  const [items, setItems] = useState([]);
   const resultInformation = [
     { label: 'Result 1 ', value: "Link 1" },
     { label: 'Result 2 ', value: "Link 2" },
@@ -42,6 +44,39 @@ export default function ResultTable2() {
     { label: 'Result 6', value: "Link 6" },
   
   ];
+
+
+  React.useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://127.0.0.1:5000/getresults", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+  
+        const data = await response.json();
+        console.log(data, typeof data);
+  
+        if (data && typeof data === 'object') {
+          const itemList = Object.values(data);
+          setItems(itemList);
+          console.log("setitems", items);
+        } else {
+          console.error("Error: Invalid data structure");
+        }
+      } catch (error) {
+        console.error("Error occurred:", error);
+      }
+    };
+  
+    fetchData(); 
+  
+    // add dependencies to control when this effect runs
+  }, []); 
+
+  const csvData = items.map(url => [url]);
 
   return (
       <ThemeProvider theme={customTheme}>
@@ -59,15 +94,13 @@ export default function ResultTable2() {
             <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell style={{ fontWeight: 'bold' }}>Page Label</TableCell>
                   <TableCell style={{ fontWeight: 'bold' }}>Page Link</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {resultInformation.map((info) => (
-                  <TableRow key={info.label}>
-                    <TableCell>{info.label}</TableCell>
-                    <TableCell>{info.value}</TableCell>
+                {items.map((item,index) => (
+                  <TableRow key={index}>
+                    <TableCell>{item}</TableCell>
      
                   </TableRow>
                 ))}
@@ -76,9 +109,11 @@ export default function ResultTable2() {
           </TableContainer>
           <br></br>
           <br></br> 
-        <Button variant="contained"  size="small" >
-                        Download Project
+          <CSVLink data={csvData} filename={'urls.csv'}>
+        <Button variant="contained" size="small">
+          Download CSV
         </Button>
+      </CSVLink>
         </div>
         
       </ThemeProvider>

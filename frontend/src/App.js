@@ -84,7 +84,6 @@ export default App;
 */
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-import SearchB from './Components/searchbar';
 import Login from './Screeens/LoginPage';
 import Register from './Screeens/RegisterPage';
 import Home from './Screeens/Home';
@@ -106,7 +105,7 @@ function App() {
     } else {
       setIsLoggedIn(false);
       // Eğer kullanıcı /login, /register, /searchbar rotalarından birinde değilse ana sayfaya yönlendir
-      if (location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/searchbar') {
+      if (location.pathname !== '/login' && location.pathname !== '/register' && location.pathname !== '/resulttable2') {
         navigate("/");
       }
     }
@@ -115,16 +114,16 @@ function App() {
   return (
     
       <Routes>
-        <Route path="/searchbar" element={<SearchB />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/" element={<Home />} />
+        <Route path="/resulttable2" element={<ResultTable2 />} />
+       
         {isLoggedIn ? (
           <>
-            <Route path="/projectscreen" element={<ProjectScreen />} />
             <Route path="/resultscreen" element={<ResultScreen />} />
+            <Route path="/projectscreen" element={<ProjectScreen />} />
             <Route path="/searchscreen" element={<SearchScreen />} />
-            <Route path="/resulttable2" element={<ResultTable2 />} />
           </>
         ) : null}
       </Routes>
