@@ -15,6 +15,7 @@ import TextField from '@mui/material/TextField';
 import { CSVLink } from 'react-csv';
 import { blue } from '@mui/material/colors';
 import axios from 'axios';
+import Alert from '@mui/material/Alert';
 
 
 
@@ -44,6 +45,8 @@ export default function ResultTable(props) {
   const month = today.getMonth() + 1;
   const year = today.getFullYear();
 
+  const [status, setStatus] = useState("");
+
   const date = `${month}-${day}-${year}`;
   console.log(date) // 4-1-2024 yazar
   const [pName, setPname] = useState("");
@@ -71,7 +74,7 @@ export default function ResultTable(props) {
     axios.post('http://localhost:5000/saveProject', data)
       .then(function (response) {
         console.log(response);
-        
+        setStatus("done");
       })
       .catch(function (error) {
         console.log(error.response);
@@ -160,7 +163,20 @@ export default function ResultTable(props) {
           Download CSV
         </Button>
       </CSVLink>
-
+        <Container maxWidth="sm">
+        {status === "done" && (
+          <Box
+            sx={{
+              width: '50%',
+              margin: 'auto',
+              textAlign: 'center',
+              mt: 2,
+            }}
+          >
+            <Alert severity="success">Projects saved!</Alert>
+          </Box>
+        )}
+      </Container>
         </div>
         
       </ThemeProvider>
