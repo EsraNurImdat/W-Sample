@@ -9,6 +9,7 @@ import jwt
 import datetime
 
 from crawl import crawl_and_save,ten_percent,cluster_websites,cluster_seperator,cluster_sampler
+from aNew import find_required_pages
 
 
 from sqlalchemy import text
@@ -31,6 +32,15 @@ db = SQLAlchemy(app)
 
 results = []
 user_check = []
+
+
+keywords = [["home"],
+            ["login", "sign in", "signin", "login"],
+            ["sitemap"],
+            ["contact"],
+            ["help"],
+            ["legal information", "terms and conditions", "privacy policy"]]
+
 
 JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
@@ -68,6 +78,15 @@ def search():
         random = ten_percent(urls)
         results.extend(random)
         return jsonify(random)
+    
+    if(technique=="a"):
+        print("A")
+        results.clear()
+        temp  = find_required_pages(keywords,urls,searchQuery)
+        results.extend(temp)
+        return jsonify(results)
+
+
     
 @app.route('/deleteProject', methods=['POST'])
 def deleteForm():
