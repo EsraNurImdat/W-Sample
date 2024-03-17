@@ -4,6 +4,7 @@ import csv
 import random
 
 from sklearn.cluster import DBSCAN
+from sklearn.manifold import TSNE
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 unique_urls = set()
@@ -77,8 +78,12 @@ def cluster_websites(urls):
     vectorizer = TfidfVectorizer(stop_words='english')
     X = vectorizer.fit_transform(html_contents)
 
+    tsne = TSNE(n_components=2, init='random')
+    X_tsne = tsne.fit_transform(X)
+
     dbscan = DBSCAN(eps=0.5, min_samples=1)
-    clusters = dbscan.fit_predict(X)
+    #clusters = dbscan.fit_predict(X)
+    clusters = dbscan.fit_predict(X_tsne)
 
     for url, cluster in zip(urls, clusters):
         print(f"Website: {url} | Cluster: {cluster}")
