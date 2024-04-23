@@ -8,7 +8,7 @@ import re
 import jwt
 import datetime
 
-from crawl import crawl_and_save,ten_percent,cluster_websites,cluster_seperator,cluster_sampler
+from crawl import crawl_and_save,ten_percent,cluster_websites,cluster_seperator,cluster_sampler, error_messages
 from aNew import find_required_pages
 
 
@@ -32,6 +32,7 @@ db = SQLAlchemy(app)
 
 results = []
 user_check = []
+messages = []
 
 
 keywords = [["home"],
@@ -45,7 +46,9 @@ keywords = [["home"],
 JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
-    results.clear()
+    messages.clear()
+   
+   
     data = request.get_json()
     technique = data.get('technique')
     searchQuery = data.get('searchQuery')
@@ -54,37 +57,43 @@ def search():
     print(technique)
 
     urls = crawl_and_save(searchQuery,3)
-    
+    messages.extend(error_messages) 
+    print("ERROR MESSAGES ",messages,"AND",urls)
     results.clear()
-    if (technique == "d"):
-        print("D")
-        results.clear()  # results listesini temizle
-        clusters = cluster_websites(urls)
-      
-       
-  
-        seperated_clusters = cluster_seperator(clusters, urls)
-       
-        print("seperated",seperated_clusters)
-        cluster_samples = cluster_sampler(seperated_clusters)  
-        print(cluster_samples)
-        results.extend(cluster_samples)
-        return jsonify(cluster_samples)
-      
+    if messages and urls:
 
-    if(technique=="g"):
-        print("G")
-        results.clear()  # results listesini temizle
-        random = ten_percent(urls)
-        results.extend(random)
-        return jsonify(random)
+        
+        if (technique == "d"):
+            print("D")
+        
+            clusters = cluster_websites(urls)
+        
+        
     
-    if(technique=="a"):
-        print("A")
-        results.clear()
-        temp  = find_required_pages(keywords,urls,searchQuery)
-        results.extend(temp)
-        return jsonify(results)
+            seperated_clusters = cluster_seperator(clusters, urls)
+        
+            print("seperated",seperated_clusters)
+            cluster_samples = cluster_sampler(seperated_clusters)  
+            print(cluster_samples)
+            results.extend(cluster_samples)
+            return jsonify(cluster_samples)
+        
+
+        if(technique=="g"):
+            print("G")
+            
+            random = ten_percent(urls)
+            results.extend(random)
+            return jsonify(random)
+        
+        if(technique=="a"):
+            print("A")
+        
+            temp  = find_required_pages(keywords,urls,searchQuery)
+            results.extend(temp)
+            return jsonify(results)
+    else:
+         return jsonify({'message': messages}), 500
 
 
     
