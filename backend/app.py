@@ -60,7 +60,7 @@ def search():
     messages.extend(error_messages) 
     print("ERROR MESSAGES ",messages,"AND",urls)
     results.clear()
-    if messages and urls:
+    if  urls:
 
         
         if (technique == "d"):
@@ -93,6 +93,7 @@ def search():
             results.extend(temp)
             return jsonify(results)
     else:
+         print("HERE")
          return jsonify({'message': messages}), 500
 
 

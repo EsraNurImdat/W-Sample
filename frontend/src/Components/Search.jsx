@@ -272,19 +272,15 @@ export default function SearchBA() {
   const [error, setError] = useState(null);
   const [activeStep, setActiveStep] = useState(1); // Track current step
   const [status, setStatus] = useState("");
-  const [resultResponse, setResponse] = useState("");
   const navigate = useNavigate();
 
   const steps = ['Enter URL', 'Select Sampling Technique', 'Crawl'];
 
   const handleSearch = () => {
     if (activeStep === 0) {
-      // Proceed to the next step
       setActiveStep(1);
     } else if (activeStep === 2) {
-      // Proceed to the next step
       setActiveStep(2);
-      // Handle crawling logic here
       const axios = require('axios');
       const data = {
         technique: technique,
@@ -304,17 +300,15 @@ export default function SearchBA() {
           .then((response) => response.json())
           .then((data) => {
             if (Array.isArray(data) && data.length === 0) {
-              console.log("here");
               setStatus("error")
-              setError("")
+              setError("Failed to crawl!")
           } else {
               if (data.hasOwnProperty("message")) {
                   setStatus("error");
                   setError(data.message)
-                  console.log(data.message);
               } else {
                   setStatus("done");
-                  console.log("data", data);
+                  setActiveStep(3)
                   navigate('/resultscreen');
               } }
             
@@ -322,6 +316,7 @@ export default function SearchBA() {
           .catch((error) => {
             console.error("Error occurred:", error);
             setStatus("error");
+            setError(error)
           });
       } else {
         setStatus("error")
