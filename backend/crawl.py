@@ -72,6 +72,7 @@ def crawl_url(url, depth, input_url):
 #9**This function is responsible for initiating the crawling process using crawl_url and then saving the collected URLs to a CSV file. This will help us when we connet python flask.
 def crawl_and_save(input_url, max_depth):
     #10**It calls crawl_url with the initial URL, maximum depth, and input URL.
+    unique_urls.clear()
     crawl_url(input_url, max_depth, input_url)
 
    #11**After crawling, it opens a CSV file (output_csv) in write mode and uses the csv.writer to write each URL from the unique_urls set into a separate row in the CSV file.

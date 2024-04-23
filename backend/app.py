@@ -45,7 +45,7 @@ keywords = [["home"],
 JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
-
+    results.clear()
     data = request.get_json()
     technique = data.get('technique')
     searchQuery = data.get('searchQuery')
@@ -55,7 +55,7 @@ def search():
 
     urls = crawl_and_save(searchQuery,3)
     
-
+    results.clear()
     if (technique == "d"):
         print("D")
         results.clear()  # results listesini temizle
@@ -317,5 +317,11 @@ def login():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+
+
+
+
 
 
