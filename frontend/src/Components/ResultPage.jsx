@@ -300,7 +300,7 @@ export default function ResultTable(props) {
         setLoading(false); 
       });
   };
-
+  const isSaveDisabled = !pName || items.length === 0;
   return (
     <ThemeProvider theme={customTheme}>
       <div style={{ textAlign: 'center' }}>
@@ -339,12 +339,12 @@ export default function ResultTable(props) {
           onChange={handlePname}
         />
         <br /><br />
-        <Button variant="contained" size="small" onClick={handleSave} disabled={loading} startIcon={<SaveIcon />}>
+        <Button variant="contained" size="small" onClick={handleSave} disabled={isSaveDisabled || loading} startIcon={<SaveIcon />}>
           {loading ? <CircularProgress size={24} /> : "Save Project"}
         </Button>
         {' '}
         <CSVLink data={csvData} filename={'urls.csv'}>
-          <Button variant="contained" size="small"  startIcon={<DownloadIcon />}>
+          <Button variant="contained" size="small"  startIcon={<DownloadIcon />} disabled={items.length === 0}>
             Download CSV
           </Button>
         </CSVLink>
