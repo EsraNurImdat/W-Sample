@@ -96,6 +96,22 @@ def search():
          print("HERE")
          return jsonify({'message': messages}), 500
 
+@app.route('/getProjectDetails', methods=['POST'])
+def get_project_details():
+    data = request.get_json()
+    project_id = data.get('projectId')
+
+    try:
+        # Verilen proje kimliğine sahip bağlantıları veritabanından al
+        query = text("SELECT url FROM project_links WHERE pid = :project_id")
+        result = db.session.execute(query, {"project_id": project_id})
+        links = [row[0] for row in result.fetchall()]
+
+        return jsonify({'links': links}), 200
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'message': 'Error getting project details'}), 500
 
     
 @app.route('/deleteProject', methods=['POST'])
