@@ -13,6 +13,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { blue } from '@mui/material/colors';
 import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
 //unreg user'ın işlem bittikten sonra karşılaşacağı screen. save project buttonu yok sadece download var.
 const customTheme = createTheme({
  palette: {
@@ -35,16 +36,7 @@ const customTheme = createTheme({
 
 export default function ResultTable2() {
   const [items, setItems] = useState([]);
-  const resultInformation = [
-    { label: 'Result 1 ', value: "Link 1" },
-    { label: 'Result 2 ', value: "Link 2" },
-    { label: 'Result 3', value: "Link 3" },
-    { label: 'Result 4 ', value: "Link 4" },
-    { label: 'Result 5 ', value: "Link 5" },
-    { label: 'Result 6', value: "Link 6" },
-  
-  ];
-
+ 
 
   React.useEffect(() => {
     const fetchData = async () => {
@@ -110,9 +102,13 @@ export default function ResultTable2() {
           <br></br>
           <br></br> 
           <CSVLink data={csvData} filename={'urls.csv'}>
-        <Button variant="contained" size="small">
-          Download CSV
-        </Button>
+          <Button
+            variant="contained"
+            size="small"
+            startIcon={<DownloadIcon />} // CSV indirme simgesi butona eklendi
+          >
+            Download CSV
+          </Button>
       </CSVLink>
         </div>
         

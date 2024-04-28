@@ -167,7 +167,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 import axios from 'axios'; // Import Axios
 import CircularProgress from '@mui/material/CircularProgress';
-
+import InputIcon from '@mui/icons-material/Input';
 const customTheme = createTheme({
   palette: {
     primary: {
@@ -289,6 +289,7 @@ export default function Login() {
                 }
                }}
               disabled={loading} // Yükleme durumunda düğmeyi devre dışı bırak
+              startIcon={<InputIcon />}
             >
               {loading ? <CircularProgress size={24} color="inherit" /> : "Sign In"} {/* Yükleme durumuna göre düğme metnini değiştir */}
             </Button>

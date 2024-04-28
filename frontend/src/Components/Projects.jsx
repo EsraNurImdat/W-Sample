@@ -397,10 +397,17 @@ import TableRow from '@mui/material/TableRow';
 import { TablePagination, Grid, Dialog, DialogTitle, DialogContent, DialogActions, CircularProgress, Typography } from '@mui/material';
 import { blue } from '@mui/material/colors';
 import DialogContentText from '@mui/material/DialogContentText';
+import SearchIcon from '@mui/icons-material/Search';
+import DateRangeIcon from '@mui/icons-material/DateRange';
+import SortIcon from '@mui/icons-material/Sort';
 import Alert from '@mui/material/Alert';
-
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import InfoIcon from '@mui/icons-material/Info';
 import { CSVLink } from 'react-csv';
-
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Cancel';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
 const customTheme = createTheme({
   palette: {
     contrastThreshold: 4.5,
@@ -623,19 +630,40 @@ export default function ProjectTable() {
   return (
     <ThemeProvider theme={customTheme}>
       <Box sx={{ textAlign: 'center' }}>
-        <Box mt={2} mb={2}>
-          <Grid container spacing={1} justifyContent="center">
-            <Grid item xs={12}  md={3}>
-              <Button variant="outlined" color="primary" onClick={() => setShowNameSearch(!showNameSearch)}>Search by Name</Button>
+      <Box mt={2} mb={2}>
+            <Grid container spacing={1} justifyContent="center">
+              <Grid item xs={12} md={3}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setShowNameSearch(!showNameSearch)}
+                  startIcon={<SearchIcon />}
+                >
+                  Search by Name
+                </Button>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => setShowDateSearch(!showDateSearch)}
+                  startIcon={<DateRangeIcon />}
+                >
+                  Search by Date
+                </Button>
+              </Grid>
+              <Grid item xs={12} md={3}>
+                <Button
+                  variant="outlined"
+                  color="primary"
+                  onClick={() => handleSort(sortBy === 'name' ? 'date' : 'name')}
+                  startIcon={<SortIcon />}
+                >
+                  {buttonText}
+                </Button>
+              </Grid>
             </Grid>
-            <Grid item xs={12}  md={3}>
-              <Button variant="outlined" color="primary" onClick={() => setShowDateSearch(!showDateSearch)}>Search by Date</Button>
-            </Grid>
-            <Grid item xs={12}  md={3}>
-              <Button variant="outlined" color="primary" onClick={() => handleSort(sortBy === 'name' ? 'date' : 'name')}>{buttonText}</Button>
-            </Grid>
-          </Grid>
-        </Box>
+      </Box>
 
         <Box>
           {showNameSearch && (
@@ -683,9 +711,34 @@ export default function ProjectTable() {
                   <TableCell>{info.project_name}</TableCell>
                   <TableCell>{info.project_date}</TableCell>
                   <TableCell>
-                    <Button size="small" variant="contained" color="primary" onClick={() => handleDelete(info.pid)} style={{ backgroundColor: '#000080' }}>Delete</Button>{' '}
-                    <Button size="small" variant="contained" color="primary" onClick={() => { setSelectedProjectId(info.pid); setDialogOpen(true); }}>Edit</Button>{' '}
-                    <Button size="small" variant="contained" color="primary" onClick={() => handleGetProjectDetails(info.pid)}>Details</Button>
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleDelete(info.pid)}
+                      style={{ backgroundColor: '#000080' }}
+                      startIcon={<DeleteIcon />}
+                    >
+                      Delete
+                    </Button>{' '}
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={() => { setSelectedProjectId(info.pid); setDialogOpen(true); }}
+                      startIcon={<EditIcon />}
+                    >
+                      Edit
+                    </Button>{' '}
+                    <Button
+                      size="small"
+                      variant="contained"
+                      color="primary"
+                      onClick={() => handleGetProjectDetails(info.pid)}
+                      startIcon={<InfoIcon />}
+                    >
+                      Details
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}
@@ -755,8 +808,8 @@ export default function ProjectTable() {
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleCloseDialog}>Cancel</Button>
-            <Button onClick={handleSaveProjectName} color="primary">Save</Button>
+            <Button onClick={handleCloseDialog}  variant="contained" size="small" startIcon={<CancelIcon />}>Cancel</Button>
+            <Button onClick={handleSaveProjectName} variant="contained" size="small" startIcon={<SaveIcon />} >Save</Button>
           </DialogActions>
         </Dialog>
 
@@ -768,8 +821,8 @@ export default function ProjectTable() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setDeleteDialogOpen(false)} color="primary">Cancel</Button>
-            <Button onClick={handleDeleteConfirmation} color="primary">Delete</Button>
+            <Button onClick={() => setDeleteDialogOpen(false)} variant="contained" size="small"startIcon={<CancelIcon />} >Cancel</Button>
+            <Button onClick={handleDeleteConfirmation} variant="contained" size="small" startIcon={<DeleteIcon />}>Delete</Button>
           </DialogActions>
         </Dialog>
 
@@ -785,9 +838,9 @@ export default function ProjectTable() {
             </Typography>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setProjectDetailsDialogOpen(false)} variant="contained" size="small" >Close</Button>
+            <Button onClick={() => setProjectDetailsDialogOpen(false)} variant="contained" size="small" startIcon={<CancelIcon />} >Close</Button>
             <CSVLink data={csvData} filename={'urls.csv'}>
-        <Button variant="contained" size="small">
+        <Button variant="contained" size="small" startIcon={<DownloadIcon />}>
           Download CSV
         </Button>
       </CSVLink>

@@ -205,6 +205,8 @@ import { blue } from '@mui/material/colors';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
 import { TablePagination, Grid, CircularProgress } from '@mui/material';
+import DownloadIcon from '@mui/icons-material/CloudDownload';
+import SaveIcon from '@mui/icons-material/Save';
 
 const customTheme = createTheme({
   palette: {
@@ -337,12 +339,12 @@ export default function ResultTable(props) {
           onChange={handlePname}
         />
         <br /><br />
-        <Button variant="contained" size="small" onClick={handleSave} disabled={loading}>
+        <Button variant="contained" size="small" onClick={handleSave} disabled={loading} startIcon={<SaveIcon />}>
           {loading ? <CircularProgress size={24} /> : "Save Project"}
         </Button>
         {' '}
         <CSVLink data={csvData} filename={'urls.csv'}>
-          <Button variant="contained" size="small">
+          <Button variant="contained" size="small"  startIcon={<DownloadIcon />}>
             Download CSV
           </Button>
         </CSVLink>

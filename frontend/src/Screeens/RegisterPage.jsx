@@ -232,6 +232,7 @@ import { useNavigate } from "react-router-dom";
 import { blue } from '@mui/material/colors';
 import axios from 'axios';
 import Alert from '@mui/material/Alert';
+import HowToRegIcon from '@mui/icons-material/HowToReg';
 
 const customTheme = createTheme({
   palette: {
@@ -397,6 +398,7 @@ export default function Register() {
                 },
               }}
               disabled={loading} // Yükleme durumunda düğmeyi devre dışı bırak
+              startIcon={<HowToRegIcon />}
             >
               {loading ? "Loading..." : "Register"} {/* Yükleme durumuna göre düğme metnini değiştir */}
             </Button>

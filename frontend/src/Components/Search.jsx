@@ -463,6 +463,7 @@ import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import LinearProgress from '@mui/material/LinearProgress';
+import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
 
 const customTheme = createTheme({
   palette: {
@@ -626,8 +627,9 @@ export default function SearchBA() {
        variant="contained"
        sx={{ mt: 2 }}
        onClick={handleSearch}
+       startIcon={<ScreenSearchDesktopIcon />}
      >
-       Crawl
+      Create Samples
      </Button>
         )}
          

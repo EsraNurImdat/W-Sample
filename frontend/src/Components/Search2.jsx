@@ -524,6 +524,7 @@ import Step from "@mui/material/Step";
 import StepLabel from "@mui/material/StepLabel";
 import Stepper from "@mui/material/Stepper";
 import axios from "axios";
+import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
 
 // Tema oluşturma kısmı
 const customTheme = createTheme({
@@ -702,8 +703,9 @@ const SearchBA = () => {
             variant="contained"
             sx={{ mt: 2 }}
             onClick={handleSearch}
+            startIcon={<ScreenSearchDesktopIcon />}
           >
-            Crawl
+            Create Samples
           </Button>
         )}
 
