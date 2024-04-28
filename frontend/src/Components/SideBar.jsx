@@ -55,9 +55,6 @@ const Sidebar = () => {
           <ChevronLeftIcon />
         </IconButton>
       </Toolbar>
-      <Avatar style={{ marginLeft: "85px", marginBottom: "5px", marginTop: "5px" }}>
-        <AccountCircle />
-      </Avatar>
       <Divider />
       <List component="nav">
         <MainListItems />
