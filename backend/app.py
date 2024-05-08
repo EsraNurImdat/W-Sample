@@ -96,13 +96,27 @@ def search():
          print("HERE")
          return jsonify({'message': messages}), 500
 
+
 @app.route('/getProjectDetails', methods=['POST'])
 def get_project_details():
-    data = request.get_json()
-    project_id = data.get('projectId')
-
     try:
-        # Verilen proje kimliğine sahip bağlantıları veritabanından al
+        data = request.get_json()
+        project_id = data.get('projectId')
+
+        if not project_id:
+            return jsonify({'error': 'Project ID (projectId) is required.'}), 400
+
+       
+        project_check_query = text("SELECT pid FROM projects WHERE pid = :project_id")
+        result = db.session.execute(project_check_query, {"project_id": project_id})
+        project_exists = result.fetchone()
+
+        if not project_exists:
+            return jsonify({'error': 'Project with the provided ID does not exist.'}), 404
+
+        print("project id:", project_id)
+
+       
         query = text("SELECT url FROM project_links WHERE pid = :project_id")
         result = db.session.execute(query, {"project_id": project_id})
         links = [row[0] for row in result.fetchall()]
@@ -111,9 +125,10 @@ def get_project_details():
 
     except Exception as e:
         print(str(e))
-        return jsonify({'message': 'Error getting project details'}), 500
+        return jsonify({'error': 'Error getting project details'}), 500
 
-    
+
+"""   
 @app.route('/deleteProject', methods=['POST'])
 def deleteForm():
     data = request.get_json()
@@ -140,6 +155,47 @@ def deleteForm():
     except Exception as e:
         print(str(e))
         return jsonify({'message': 'Error for deleting project!'}), 500
+ """
+from flask import jsonify
+
+@app.route('/deleteProject', methods=['POST'])
+def deleteForm():
+    try:
+        data = request.get_json()
+        pId = data.get('delId')
+
+        if not pId:
+            return jsonify({'error': 'Project ID (delId) is required.'}), 400
+
+        # Check if the project ID exists in the database
+        project_check_query = text("SELECT pid FROM projects WHERE pid = :pId")
+        result = db.session.execute(project_check_query, {"pId": pId})
+        project_exists = result.fetchone()
+
+        if not project_exists:
+            return jsonify({'error': 'Project with the provided ID does not exist.'}), 404
+
+        print("delete pid", pId)
+
+        user_p_delete_query = text("DELETE FROM user_projects WHERE project_id= :pId")
+        db.session.execute(user_p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        links_p_delete_query = text("DELETE FROM project_links WHERE pid= :pId")
+        db.session.execute(links_p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        p_delete_query = text("DELETE FROM projects WHERE pid = :pId")
+        db.session.execute(p_delete_query, {"pId": pId})
+        db.session.commit()
+
+        return jsonify({'message': 'Project successfully deleted!'}), 200
+
+    except Exception as e:
+        print(str(e))
+        return jsonify({'error': 'Error occurred while deleting project.'}), 500
+
+    
 @app.route('/editProject', methods=['POST'])
 def updateName():
     data = request.get_json()
@@ -160,11 +216,19 @@ def updateName():
         return jsonify({'message': 'Error for updating project!'}), 500
     
 
-@app.route('/getresults',methods=['GET'])
+@app.route('/getresults', methods=['GET'])
 def getresults():
-    print(results)
-    return jsonify(results)
+    try:
+        if not results:
+            return jsonify({'error': 'No results found.'}), 404
 
+        print(results)
+        return jsonify(results), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+"""
 @app.route('/saveProject',methods=['POST'])
 def saveProject():
     data = request.get_json()
@@ -204,35 +268,82 @@ def saveProject():
 
     return jsonify({'message': 'You have successfully saved!'}), 200
 
+"""
+@app.route('/saveProject', methods=['POST'])
+def saveProject():
+    try:
+        data = request.get_json()
+        pName = data.get('pName')
+        date = data.get('date')
+        username = data.get('username')
+        items = data.get('items')
 
-@app.route('/getProject',methods=['POST'])
+        if not all([pName, date, username, items]):
+            return jsonify({'error': 'Missing required fields.'}), 400
+
+        print(username)
+        print(pName)
+        print(date)
+        print(items)
+
+        query = text("INSERT INTO projects (project_name, project_date) VALUES (:project_name, :project_date) RETURNING pid")
+        parameters = {"project_name": pName, "project_date": date}
+        result = db.session.execute(query, parameters)
+        pid = result.fetchone()[0]
+        db.session.commit()
+
+        query = text("INSERT INTO user_projects (user_name, project_id) VALUES (:username, :pid)")
+        parameters = {"username": username, "pid": pid}
+        db.session.execute(query, parameters)
+        db.session.commit()
+
+        for i in items:
+            query = text("INSERT INTO project_links (url, pid) VALUES (:url, :pid)")
+            parameters = {"url": i, "pid": pid}
+            db.session.execute(query, parameters)
+
+        db.session.commit()
+
+        return jsonify({'message': 'You have successfully saved!'}), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+
+@app.route('/getProject', methods=['POST'])
 def getProject():
-   
-    data = request.json
-    username = data['username']
+    try:
+        data = request.json
+        username = data.get('username')
 
-    query = text("""
-         SELECT projects.pid, projects.project_name, projects.project_date
-         FROM user_projects
-         JOIN projects ON user_projects.project_id = projects.pid
-         WHERE user_projects.user_name = :username
-    """)
-    result = db.session.execute(query, {"username": username})
-    #projects = result.fetchall()
+        if not username:
+            return jsonify({'error': 'Username is required.'}), 400
 
-    # Extract column names
-    columns = result.keys()
+        query = text("""
+             SELECT projects.pid, projects.project_name, projects.project_date
+             FROM user_projects
+             JOIN projects ON user_projects.project_id = projects.pid
+             WHERE user_projects.user_name = :username
+        """)
+        result = db.session.execute(query, {"username": username})
 
-    # Convert rows to list of dictionaries
-    projects = []
-    for row in result.fetchall():
-        project = {}
-        for idx, column in enumerate(columns):
-            project[column] = row[idx]
-        projects.append(project)
+       
+        columns = result.keys()
 
-    print(projects)
-    return jsonify(projects)
+        
+        projects = []
+        for row in result.fetchall():
+            project = {}
+            for idx, column in enumerate(columns):
+                project[column] = row[idx]
+            projects.append(project)
+
+        print(projects)
+        return jsonify(projects), 200
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 
 """
