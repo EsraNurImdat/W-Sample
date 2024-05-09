@@ -662,9 +662,9 @@ const SearchBA = () => {
         }}
       >
         <Stepper activeStep={activeStep}>
-          {steps.map((label) => (
+          {steps.map((label,index) => (
             <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+              <StepLabel StepIconProps={{ style: { color: index === activeStep ? "#0091ea" :  "#4caf50" } }}>{label}</StepLabel>
             </Step>
           ))}
         </Stepper>

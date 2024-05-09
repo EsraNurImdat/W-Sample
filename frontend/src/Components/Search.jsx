@@ -464,6 +464,7 @@ import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import LinearProgress from '@mui/material/LinearProgress';
 import ScreenSearchDesktopIcon from '@mui/icons-material/ScreenSearchDesktop';
+import { colors } from "@mui/material";
 
 const customTheme = createTheme({
   palette: {
@@ -504,7 +505,7 @@ const Search = ({ setSearchQuery }) => {
         placeholder="Search..."
         size="large"
         fullWidth
-        style={{ margin: "10px auto", minWidth: 200 }}
+        style={{ margin: "10px auto", minWidth: 200  }}
       />
     </div>
   );
@@ -514,17 +515,22 @@ export default function SearchBA() {
   const [searchQuery, setSearchQuery] = useState("");
   const [technique, setTechnique] = useState("");
   const [error, setError] = useState(null);
-  const [activeStep, setActiveStep] = useState(1); // Track current step
+  const [activeStep, setActiveStep] = useState(1); 
   const [status, setStatus] = useState("");
   const navigate = useNavigate();
 
   const steps = ['Enter URL', 'Select Sampling Technique', 'Crawl and Create Samples'];
 
+ 
+ 
+  
   const handleSearch = () => {
     if (activeStep === 0) {
       setActiveStep(1);
+      
     } else if (activeStep === 2) {
-      setActiveStep(2);
+      
+      
       const axios = require('axios');
       const data = {
         technique: technique,
@@ -554,8 +560,9 @@ export default function SearchBA() {
                   setStatus("done");
                   setActiveStep(3)
                   navigate('/resultscreen');
+                 
               } }
-            
+              
           })
           .catch((error) => {
             console.error("Error occurred:", error);
@@ -584,6 +591,7 @@ export default function SearchBA() {
     }
   };
 
+
   return (
     <ThemeProvider theme={customTheme}>
       <div
@@ -595,16 +603,18 @@ export default function SearchBA() {
           minHeight: "70vh",
         }}
       >
-          <Stepper activeStep={activeStep}>
-          {steps.map((label) => (
-            <Step key={label}>
-              <StepLabel>{label}</StepLabel>
+          <Stepper activeStep={activeStep} >
+          {steps.map((label, index) => (
+            <Step key={label} >
+              <StepLabel StepIconProps={{ style: { color: index === activeStep ? "#0091ea" :  "#4caf50" } }}  >{label}</StepLabel>
             </Step>
           ))}
         </Stepper>
+
+
         <Search setSearchQuery={setSearchQuery} />
         <br></br>
-        {activeStep === 1 && (
+      
           <FormControl sx={{ minWidth: "80%", maxWidth: "80%", marginBottom: 2 }}>
             <InputLabel>Select Sampling Technique</InputLabel>
             <Select
@@ -620,7 +630,7 @@ export default function SearchBA() {
               <MenuItem value={"g"}>(g) randomly selected pages amounting to at least 10 % of the sample established by points (a) to (f)…</MenuItem>
             </Select>
           </FormControl>
-        )}
+       
         {activeStep === 2 &&  status != "waiting" && (
        <Button
        type="submit"
