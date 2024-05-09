@@ -10,6 +10,59 @@ unique_urls = set()
 visited_urls = set()
 error_messages = set()
 
+def crawl_url(url, depth, input_url):
+    if url in visited_urls or depth == 0:
+        return
+
+    try:
+        response = requests.get(url)
+        if response.status_code == 200:
+            visited_urls.add(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+            a_tags = soup.find_all('a', href=True)
+
+            for a_tag in a_tags:
+                next_url = a_tag.get('href')
+
+                if not 'http' in next_url:
+                    next_url = urljoin(input_url, a_tag.get('href'))
+
+                if next_url not in unique_urls and 'mailto' not in next_url and 'javascript' not in next_url and url in next_url:
+                    unique_urls.add(next_url)
+                    print("Next Url:", next_url)
+                    write_to_csv(next_url)
+
+                crawl_url(next_url, depth - 1, input_url)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+def write_to_csv(url):
+    with open('urls.csv', 'a', newline='', encoding='utf-8') as csvfile:
+        fieldnames = ['URL']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+
+        writer.writerow({'URL': url})
+
+
+
+def clear_csv():
+    open('urls.csv', 'w').close()  
+
+
+
+def crawl_and_save(input_url, max_depth):
+    unique_urls.clear()
+    error_messages.clear()
+    clear_csv()
+    crawl_url(input_url, max_depth, input_url)
+
+    with open("output.csv", 'w') as csv_file:
+        writer = csv.writer(csv_file)
+        for url in unique_urls:
+            writer.writerow([url])
+    
+    return unique_urls
+"""
 def crawl_url(url, depth, main_url):
     if url in visited_urls or depth == 0 or not is_same_domain(url, main_url):
         return
@@ -63,6 +116,7 @@ def crawl_and_save(input_url, max_depth):
             writer.writerow([url])
     
     return unique_urls
+"""
 
 def ten_percent(unique_urls):
     urls_list = list(unique_urls)
