@@ -112,7 +112,7 @@ export const navLinks = [
 const Navbar = () => {
   
   return (
-    <AppBar position="static" elevation={0} color="transparent">
+    <AppBar position="static" elevation={0} color="transparent" id="nav">
       <Container
         maxWidth="xl"
         sx={{
@@ -148,7 +148,9 @@ const Navbar = () => {
         >
           {navLinks.map((navLink) => (
             <Link
+            
               key={navLink.id}
+              id="nav"
               href={navLink.destination}
               underline="none"
               color="#01579b"

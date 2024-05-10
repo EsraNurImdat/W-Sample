@@ -1,8 +1,8 @@
-/*import React from 'react';
+import React from 'react';
 import { render, fireEvent, waitFor, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import { BrowserRouter as Router } from 'react-router-dom';
-import Login from './Login';
+import Login from './LoginPage';
 
 test('renders login page', () => {
   render(
@@ -54,7 +54,7 @@ test('submits form with correct data', async () => {
     expect(screen.getByText('Searching Screen')).toBeInTheDocument();
   });
 });
-*/
+
 
 /*
 import React from 'react';
