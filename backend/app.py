@@ -47,7 +47,7 @@ JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
     messages.clear()
-   
+    
    
     data = request.get_json()
     technique = data.get('technique')
@@ -57,19 +57,17 @@ def search():
     print(technique)
 
     urls = crawl_and_save(searchQuery,3)
+    print(urls)
     messages.extend(error_messages) 
     print("ERROR MESSAGES ",messages,"AND",urls)
     results.clear()
+    
     if  urls:
 
-        
         if (technique == "d"):
             print("D")
         
             clusters = cluster_websites(urls)
-        
-        
-    
             seperated_clusters = cluster_seperator(clusters, urls)
         
             print("seperated",seperated_clusters)
@@ -92,6 +90,7 @@ def search():
             temp  = find_required_pages(keywords,urls,searchQuery)
             results.extend(temp)
             return jsonify(results)
+        
     else:
          print("HERE")
          return jsonify({'message': messages}), 500

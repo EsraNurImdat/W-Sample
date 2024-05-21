@@ -671,7 +671,7 @@ const SearchBA = () => {
 
         <Search setSearchQuery={setSearchQuery} onChange={handleChange} />
         <br />
-        {activeStep === 1 && (
+        
           <FormControl sx={{ minWidth: "80%", maxWidth: "80%", marginBottom: 2 }}>
             <InputLabel>Select Sampling Technique</InputLabel>
             <Select
@@ -696,7 +696,6 @@ const SearchBA = () => {
               </MenuItem>
             </Select>
           </FormControl>
-        )}
         {activeStep === 2 && status !== "waiting" && (
           <Button
             type="submit"
