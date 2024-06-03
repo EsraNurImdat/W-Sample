@@ -671,7 +671,7 @@ const SearchBA = () => {
 
         <Search setSearchQuery={setSearchQuery} onChange={handleChange} />
         <br />
-        {activeStep === 1 && (
+        
           <FormControl sx={{ minWidth: "80%", maxWidth: "80%", marginBottom: 2 }}>
             <InputLabel>Select Sampling Technique</InputLabel>
             <Select
@@ -685,9 +685,6 @@ const SearchBA = () => {
               <MenuItem value={"a"}>
                 (a) the home, login, sitemap, contact, help and legal information pages
               </MenuItem>
-              <MenuItem value={"c"}>
-                (c) the pages containing the accessibility statement or policy and the pages containing the feedback mechanism
-              </MenuItem>
               <MenuItem value={"d"}>
                 (d) examples of pages having a substantially distinct appearance or presenting a different type of content
               </MenuItem>
@@ -696,7 +693,7 @@ const SearchBA = () => {
               </MenuItem>
             </Select>
           </FormControl>
-        )}
+        
         {activeStep === 2 && status !== "waiting" && (
           <Button
             type="submit"

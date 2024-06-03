@@ -625,7 +625,6 @@ export default function SearchBA() {
               onChange={handleChange}
             > 
               <MenuItem value={"a"}>(a) the home, login, sitemap, contact, help and legal information pages</MenuItem> 
-              <MenuItem value={"c"}>(c) the pages containing the accessibility statement or policy and the pages containing the feedback mechanism</MenuItem>
               <MenuItem value={"d"}>(d) examples of pages having a substantially distinct appearance or presenting a different type of content</MenuItem>
               <MenuItem value={"g"}>(g) randomly selected pages amounting to at least 10 % of the sample established by points (a) to (f)…</MenuItem>
             </Select>

@@ -10,10 +10,9 @@
     "@mui/material": "^5.15.0",
     "@mui/styled-engine": "^5.15.0",
     "@reduxjs/toolkit": "^2.0.1",
-    "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.8",
+    "chokidar": "^3.6.0",
     "react": "^18.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
@@ -23,14 +22,14 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "react-app-rewired start",
     "start-backend": "cd backend && env/bin/flask run --no-debugger",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-},
-
-
+  },
+ 
+  
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -48,5 +47,22 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.(js|jsx)$": "babel-jest",
+      "\\.(png|jpg|jpeg|gif|svg)$": "<rootDir>/fileTransformer.js"
+    },
+    "testEnvironment": "jsdom"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.24.5",
+    "@babel/preset-react": "^7.24.1",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "babel-jest": "^29.7.0",
+    "jest": "^27.5.1",
+    "react-app-rewired": "^2.2.1"
   }
 }

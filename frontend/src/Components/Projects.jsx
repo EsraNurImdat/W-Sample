@@ -881,7 +881,12 @@ import { CSVLink } from 'react-csv';
 import SaveIcon from '@mui/icons-material/Save';
 import CancelIcon from '@mui/icons-material/Cancel';
 import DownloadIcon from '@mui/icons-material/CloudDownload';
-
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import {
+  Tooltip,
+  IconButton,
+  Popover,
+} from '@mui/material';
 
 const customTheme = createTheme({
   palette: {
@@ -1131,6 +1136,20 @@ export default function ProjectTable() {
     }
   }, [filteredProjects, loading]);
 
+
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleInfoIconClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handlePopoverClose = () => {
+    setAnchorEl(null);
+  };
+
+  const open = Boolean(anchorEl);
+  const id = open ? 'simple-popover' : undefined;
   return (
     <ThemeProvider theme={customTheme}>
       <Box sx={{ textAlign: 'center' }}>
@@ -1211,58 +1230,100 @@ export default function ProjectTable() {
        
         )}
 
-        <TableContainer component={Paper} sx={{ width: '60%', maxWidth: '80%', margin: 'auto', mt: 4 }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ fontWeight: 'bold' }}>Project Name</TableCell>
-                <TableCell style={{ fontWeight: 'bold' }}>Project Date</TableCell>
-                <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
+<TableContainer component={Paper} sx={{ width: '60%', maxWidth: '80%', margin: 'auto', mt: 4 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ fontWeight: 'bold' }}>Project Name</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Project Date</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Project Main Url</TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>
+                Project Sampling Technique
+                <Tooltip title="Explanation of sampling technique">
+                  <IconButton size="small" onClick={handleInfoIconClick}>
+                    <InfoOutlinedIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </TableCell>
+              <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {(rowsPerPage > 0
+              ? filteredProjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              : filteredProjects
+            ).map((info) => (
+              <TableRow key={info.pid}>
+                <TableCell>{info.project_name}</TableCell>
+                <TableCell>{info.project_date}</TableCell>
+                <TableCell>{info.mainurl}</TableCell>
+                <TableCell>{info.technique}</TableCell>
+                <TableCell>
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleDelete(info.pid)}
+                    style={{ backgroundColor: '#000080' }}
+                    startIcon={<DeleteIcon />}
+                  >
+                    Delete
+                  </Button>{' '}
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => { setSelectedProjectId(info.pid); setDialogOpen(true); }}
+                    startIcon={<EditIcon />}
+                  >
+                    Edit
+                  </Button>{' '}
+                  <Button
+                    size="small"
+                    variant="contained"
+                    color="primary"
+                    onClick={() => handleGetProjectDetails(info.pid)}
+                    startIcon={<InfoIcon />}
+                  >
+                    Details
+                  </Button>
+                </TableCell>
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {(rowsPerPage > 0
-                ? filteredProjects.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                : filteredProjects
-              ).map((info) => (
-                <TableRow key={info.pid}>
-                  <TableCell>{info.project_name}</TableCell>
-                  <TableCell>{info.project_date}</TableCell>
-                  <TableCell>
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleDelete(info.pid)}
-                      style={{ backgroundColor: '#000080' }}
-                      startIcon={<DeleteIcon />}
-                    >
-                      Delete
-                    </Button>{' '}
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={() => { setSelectedProjectId(info.pid); setDialogOpen(true); }}
-                      startIcon={<EditIcon />}
-                    >
-                      Edit
-                    </Button>{' '}
-                    <Button
-                      size="small"
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleGetProjectDetails(info.pid)}
-                      startIcon={<InfoIcon />}
-                    >
-                      Details
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'center',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'center',
+        }}
+      >
+        <div style={{ padding: 16 }}>
+          <p>
+            (a) the home, login, sitemap, contact, help and legal information pages,
+            </p>
+            <br></br>
+            <p>
+
+               (d) examples of pages having a substantially distinct appearance or presenting a different type of content,
+            </p>
+            <br></br>
+           <p>
+            (g) randomly selected pages amounting to at least 10 % of the sample 
+           </p>
+            
+        </div>
+      </Popover>
 
         {loading && (
           <Box mt={2}>

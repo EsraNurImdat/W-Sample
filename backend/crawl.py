@@ -52,6 +52,7 @@ def clear_csv():
 
 def crawl_and_save(input_url, max_depth):
     unique_urls.clear()
+    visited_urls.clear()
     error_messages.clear()
     clear_csv()
     crawl_url(input_url, max_depth, input_url)

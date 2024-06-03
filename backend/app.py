@@ -34,6 +34,8 @@ results = []
 user_check = []
 messages = []
 
+mainUrl = ""
+sTecnique = ""
 
 keywords = [["home"],
             ["login", "sign in", "signin", "login"],
@@ -47,14 +49,17 @@ JWT_SECRET_KEY = "your-secret-key"
 @app.route('/searchscreen',methods=['POST'])
 def search():
     messages.clear()
-   
+    global mainUrl
+    global sTecnique 
    
     data = request.get_json()
     technique = data.get('technique')
     searchQuery = data.get('searchQuery')
     
     print(searchQuery)
+    mainUrl = searchQuery + mainUrl 
     print(technique)
+    sTecnique = technique + sTecnique
 
     urls = crawl_and_save(searchQuery,3)
     messages.extend(error_messages) 
@@ -277,6 +282,10 @@ def saveProject():
         date = data.get('date')
         username = data.get('username')
         items = data.get('items')
+        
+        global mainUrl
+        global sTecnique
+
 
         if not all([pName, date, username, items]):
             return jsonify({'error': 'Missing required fields.'}), 400
@@ -285,9 +294,11 @@ def saveProject():
         print(pName)
         print(date)
         print(items)
+        print("main url",mainUrl)
+        print("search teknik",sTecnique)
 
-        query = text("INSERT INTO projects (project_name, project_date) VALUES (:project_name, :project_date) RETURNING pid")
-        parameters = {"project_name": pName, "project_date": date}
+        query = text("INSERT INTO projects (project_name, project_date, mainurl, technique) VALUES (:project_name, :project_date, :mainurl, :technique) RETURNING pid")
+        parameters = {"project_name": pName, "project_date": date, "mainurl": mainUrl, "technique":sTecnique}
         result = db.session.execute(query, parameters)
         pid = result.fetchone()[0]
         db.session.commit()
@@ -303,7 +314,9 @@ def saveProject():
             db.session.execute(query, parameters)
 
         db.session.commit()
-
+        
+        mainUrl = ""
+        sTecnique = ""
         return jsonify({'message': 'You have successfully saved!'}), 200
 
     except Exception as e:
@@ -320,7 +333,7 @@ def getProject():
             return jsonify({'error': 'Username is required.'}), 400
 
         query = text("""
-             SELECT projects.pid, projects.project_name, projects.project_date
+             SELECT projects.pid, projects.project_name, projects.project_date, projects.mainurl, projects.technique
              FROM user_projects
              JOIN projects ON user_projects.project_id = projects.pid
              WHERE user_projects.user_name = :username
