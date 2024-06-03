@@ -1,5 +1,6 @@
 from flask import Flask, request, session, redirect, url_for, jsonify
 from flask import *
+from flask import jsonify
 
 #PostgreSQL database adapter for the Python
 import psycopg2 #pip install psycopg2 
@@ -34,6 +35,8 @@ results = []
 user_check = []
 messages = []
 
+mainUrl = ""
+sTecnique = ""
 
 keywords = [["home"],
             ["login", "sign in", "signin", "login"],
@@ -48,13 +51,17 @@ JWT_SECRET_KEY = "your-secret-key"
 def search():
     messages.clear()
     
-   
+    global mainUrl
+    global sTecnique
+
     data = request.get_json()
     technique = data.get('technique')
     searchQuery = data.get('searchQuery')
     
     print(searchQuery)
+    mainUrl = searchQuery + mainUrl
     print(technique)
+    sTecnique = technique + sTecnique
 
     urls = crawl_and_save(searchQuery,3)
     print(urls)
@@ -127,36 +134,6 @@ def get_project_details():
         return jsonify({'error': 'Error getting project details'}), 500
 
 
-"""   
-@app.route('/deleteProject', methods=['POST'])
-def deleteForm():
-    data = request.get_json()
-
-    pId = data.get('delId')
-    print("delete pid",pId)
-    try:
-        
-        user_p_delete_query = text("DELETE FROM user_projects WHERE project_id= :pId")
-        db.session.execute(user_p_delete_query, {"pId": pId})
-        db.session.commit()
-
-        links_p_delete_query = text("DELETE FROM project_links WHERE pid= :pId")
-        db.session.execute(links_p_delete_query, {"pId": pId})
-        db.session.commit()
-
-        
-        p_delete_query = text("DELETE FROM projects WHERE pid = :pId")
-        db.session.execute(p_delete_query, {"pId": pId})
-        db.session.commit()
-
-        return jsonify({'message': 'Project successfully deleted!'}), 200
-
-    except Exception as e:
-        print(str(e))
-        return jsonify({'message': 'Error for deleting project!'}), 500
- """
-from flask import jsonify
-
 @app.route('/deleteProject', methods=['POST'])
 def deleteForm():
     try:
@@ -226,48 +203,6 @@ def getresults():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-"""
-@app.route('/saveProject',methods=['POST'])
-def saveProject():
-    data = request.get_json()
-    pName = data.get('pName')
-    date = data.get('date')
-    username = data.get('username')
-
-    print(username)
-    
-    items = data.get('items')
-    print(pName)
-    print(date)
-    print(items)
-
-    pid = 0;
-    
-    query = text("INSERT INTO projects (project_name, project_date) VALUES (:project_name, :project_date) RETURNING pid")
-    parameters = {"project_name": pName, "project_date": date}
-    result = db.session.execute(query, parameters)
-    pid = result.fetchone()[0] 
-    db.session.commit()
-
-    query = text("INSERT INTO user_projects (user_name, project_id) VALUES (:username, :pid)")
-    parameters = {"username": username, "pid": pid}
-    result = db.session.execute(query, parameters)
-    db.session.commit()
-
-    #cur.execute('SELECT pid FROM projects WHERE project_name = %s', (pName,))
-    #pid = cur.fetchone()
-
-    for i in items:
-        query = text("INSERT INTO project_links (url, pid) VALUES (:url, :pid)")
-        parameters = {"url": i, "pid": pid}
-        db.session.execute(query, parameters)
-
-    db.session.commit()
-
-    return jsonify({'message': 'You have successfully saved!'}), 200
-
-"""
 @app.route('/saveProject', methods=['POST'])
 def saveProject():
     try:
@@ -277,6 +212,10 @@ def saveProject():
         username = data.get('username')
         items = data.get('items')
 
+
+        global mainUrl
+        global sTecnique
+
         if not all([pName, date, username, items]):
             return jsonify({'error': 'Missing required fields.'}), 400
 
@@ -285,8 +224,8 @@ def saveProject():
         print(date)
         print(items)
 
-        query = text("INSERT INTO projects (project_name, project_date) VALUES (:project_name, :project_date) RETURNING pid")
-        parameters = {"project_name": pName, "project_date": date}
+        query = text("INSERT INTO projects (project_name, project_date, mainurl , technique) VALUES (:project_name, :project_date, :mainurl, :technique) RETURNING pid")
+        parameters = {"project_name": pName, "project_date": date, "mainurl": mainUrl, "technique":sTecnique}
         result = db.session.execute(query, parameters)
         pid = result.fetchone()[0]
         db.session.commit()
@@ -319,7 +258,7 @@ def getProject():
             return jsonify({'error': 'Username is required.'}), 400
 
         query = text("""
-             SELECT projects.pid, projects.project_name, projects.project_date
+             SELECT projects.pid, projects.project_name, projects.project_date, projects.mainurl, projects.technique
              FROM user_projects
              JOIN projects ON user_projects.project_id = projects.pid
              WHERE user_projects.user_name = :username
@@ -343,43 +282,6 @@ def getProject():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
-
-
-"""
-@app.route('/getProjects', methods=['GET'])
-def get_projects():
-    user_name = request.args.get('user_name')  # Kullanıcı adını isteğe bağlı olarak al
-    if not user_name:
-        return jsonify({"error": "Missing user_name parameter"}), 400  # Eğer kullanıcı adı belirtilmemişse hata döndür
-
-    # Kullanıcının projelerini almak için bir sorgu oluştur
-    """
-      # query = text("""
-         #SELECT projects.project_id, projects.project_name, projects.project_date
-         # FROM user_project
-         # JOIN projects ON user_project.project_id = projects.project_id
-    # WHERE user_project.user_name = :user_name
-   # """)
-    
-    
-    # Sorguyu çalıştır
-"""
-    result = db.session.execute(query, {"user_name": user_name})
-
-    # Satırları sözlük listesine dönüştür
-    projects = []
-    for row in result.fetchall():
-        project = {
-            "project_id": row["project_id"],
-            "project_name": row["project_name"],
-            "project_date": row["project_date"]
-        }
-        projects.append(project)
-
-    return jsonify(projects)"""
-
-
-    
 
 
 @app.route('/register', methods=['POST'])

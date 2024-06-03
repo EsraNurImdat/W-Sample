@@ -14,6 +14,7 @@ import { blue } from '@mui/material/colors';
 import React, { useState } from 'react';
 import { CSVLink } from 'react-csv';
 import DownloadIcon from '@mui/icons-material/CloudDownload';
+import { Link } from "react-router-dom";
 //unreg user'ın işlem bittikten sonra karşılaşacağı screen. save project buttonu yok sadece download var.
 const customTheme = createTheme({
  palette: {
@@ -109,7 +110,13 @@ export default function ResultTable2() {
           >
             Download CSV
           </Button>
-      </CSVLink>
+          </CSVLink>
+          <br></br>
+          <br></br>
+                <Link to="/register" >
+                  {"If you want to save and enjoy the website's other functionalities, You can create an account and become a member."}
+                </Link>
+
         </div>
         
       </ThemeProvider>

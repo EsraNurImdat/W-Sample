@@ -63,61 +63,6 @@ def crawl_and_save(input_url, max_depth):
             writer.writerow([url])
     
     return unique_urls
-"""
-def crawl_url(url, depth, main_url):
-    if url in visited_urls or depth == 0 or not is_same_domain(url, main_url):
-        return
-    
-    try:
-        response = requests.get(url)
-        response.raise_for_status()
-        
-        if response.status_code == 200:
-            visited_urls.add(url)
-            soup = BeautifulSoup(response.text, 'html.parser')
-            a_tags = soup.find_all('a', href=True)
-            
-            for a_tag in a_tags:
-                next_url = a_tag.get('href')
-                
-                if not next_url:
-                    continue
-                
-                if not next_url.startswith('http'):
-                    next_url = urljoin(url, next_url)
-                
-                if is_same_domain(next_url, main_url) and next_url not in unique_urls and 'mailto' not in next_url and 'javascript' not in next_url:
-                    unique_urls.add(next_url)
-                    print("Next Url:", next_url)
-                    
-                    crawl_url(next_url, depth - 1, main_url)
-                    
-    except requests.exceptions.RequestException as e:
-        print(f"Failed to crawl the page: {url}. Error: {e}")
-        message = f"Failed to crawl the page: {url}. Error: {e}"
-        error_messages.add(message)
-    except Exception as e:
-        print(f"Error while processing {url}: {e}")
-        message = f"Error while processing {url}: {e}"
-        error_messages.add(message)
-
-def is_same_domain(url, main_url):
-    main_domain = urlparse(main_url).netloc
-    url_domain = urlparse(url).netloc
-    return main_domain == url_domain
-
-def crawl_and_save(input_url, max_depth):
-    unique_urls.clear()
-    error_messages.clear()
-    crawl_url(input_url, max_depth, input_url)
-
-    with open("output.csv", 'w') as csv_file:
-        writer = csv.writer(csv_file)
-        for url in unique_urls:
-            writer.writerow([url])
-    
-    return unique_urls
-"""
 
 def ten_percent(unique_urls):
     urls_list = list(unique_urls)
