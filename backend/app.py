@@ -2,8 +2,7 @@ from flask import Flask, request, session, redirect, url_for, jsonify
 from flask import *
 from flask import jsonify
 
-#PostgreSQL database adapter for the Python
-import psycopg2 #pip install psycopg2 
+
 from flask_cors import CORS
 import re 
 import jwt
@@ -16,9 +15,6 @@ from aNew import find_required_pages
 from sqlalchemy import text
 from flask_sqlalchemy import SQLAlchemy
 
-
-#turning a password into ciphertext, to block  password breaches.
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "super secret key"
