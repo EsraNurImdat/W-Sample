@@ -237,6 +237,8 @@ def saveProject():
             db.session.execute(query, parameters)
 
         db.session.commit()
+        mainUrl =""
+        sTecnique =""
 
         return jsonify({'message': 'You have successfully saved!'}), 200
 
